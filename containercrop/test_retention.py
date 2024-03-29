@@ -2,8 +2,8 @@ from datetime import datetime, timedelta, timezone
 
 import pytest
 
-from .github_api import Image
-from .main import RetentionArgs, apply_retention_policy
+from containercrop.github_api import Image
+from containercrop.retention import RetentionArgs, apply_retention_policy
 
 
 @pytest.fixture

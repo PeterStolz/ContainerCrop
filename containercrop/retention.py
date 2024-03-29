@@ -12,7 +12,7 @@ from typing import Annotated
 from dateparser import parse
 from pydantic import BaseModel, Field, field_validator, model_validator
 
-from .github_api import GithubAPI, Image
+from containercrop.github_api import GithubAPI, Image
 
 
 def get_args_from_env() -> dict[str, str | None]:
@@ -87,24 +87,26 @@ def matches_retention_policy(image: Image, args: RetentionArgs) -> bool:
     if args.skip_tags and any(
         any(fnmatch(tag, skip_tag) for skip_tag in args.skip_tags) for tag in image.tags
     ):
-        logging.debug(f"Image {image.name}({image.url}) does match skip tags")
+        logging.debug("Image %s(%s) does match skip tags", image.name, image.url)
         return False
     if args.untagged_only and image.tags:
         logging.debug(
-            f"Image {image.name}({image.url}) is tagged and untagged_only is set"
+            "Image %s(%s) is tagged and untagged_only is set", image.name, image.url
         )
         return False
     if args.cut_off and image.is_before_cut_off_date(args.cut_off):
-        logging.debug(f"Image {image.name}({image.url}) is before cut-off date")
+        logging.debug("Image %s(%s) is before cut-off date", image.name, image.url)
         return True
     if args.filter_tags and any(
         any(fnmatch(tag, filter_tag) for filter_tag in args.filter_tags)
         for tag in image.tags
     ):
-        logging.debug(f"Image {image.name}({image.url}) does match filter tags")
+        logging.debug("Image %s(%s) does match filter tags", image.name, image.url)
         return True
     logging.debug(
-        f"Image {image.name}({image.url}) does not match any policy, therefore we keep it"
+        "Image %s(%s) does not match any policy, therefore we keep it",
+        image.name,
+        image.url,
     )
     return False
 
@@ -119,11 +121,7 @@ def apply_retention_policy(args: RetentionArgs, images: list[Image]) -> list[Ima
 
 async def main(retention_args: RetentionArgs):
     api = GithubAPI(owner=retention_args.repo_owner, token=retention_args.token)
-    images = await api.get_versions(retention_args.image_names)
-
-
-if __name__ == "__main__":
-    import asyncio
-
-    logging.basicConfig(level=logging.DEBUG)
-    asyncio.run(main(retention_args=RetentionArgs.from_env()))
+    images = await api.get_versions(retention_args.image_name)
+    to_delete = apply_retention_policy(retention_args, images)
+    logging.info("Images to delete: %s", to_delete)
+    await api.delete_images(to_delete)

@@ -81,7 +81,7 @@ class GithubAPI:
         return self.is_user
 
     @ensure_user_checked
-    async def get_all_versions(self, url: str) -> list[Image]:
+    async def _get_all_versions(self, url: str) -> list[Image]:
         "Get all versions of an image"
         # TODO get all pages and not just one
         async with self.session.get(url) as resp:
@@ -92,7 +92,7 @@ class GithubAPI:
     async def get_versions_for_user(self, image_name: str) -> list[Image]:
         "Get all versions of an image for a repo"
         assert self.is_user
-        return await self.get_all_versions(
+        return await self._get_all_versions(
             f"{self.api_url}/user/packages/container/{image_name}/versions"
         )
 
@@ -100,7 +100,7 @@ class GithubAPI:
     async def get_versions_for_org(self, image_name: str) -> list[Image]:
         "Get all versions of an image for an org"
         assert not self.is_user
-        return await self.get_all_versions(
+        return await self._get_all_versions(
             f"{self.api_url}/orgs/{self.owner}/packages/container/{image_name}/versions"
         )
 
@@ -110,3 +110,11 @@ class GithubAPI:
         if self.is_user:
             return await self.get_versions_for_user(image_name)
         return await self.get_versions_for_org(image_name)
+
+    async def delete_image(self, image: Image) -> bool:
+        "Delete an image"
+        return False
+
+    async def delete_images(self, images: list[Image]) -> list[Image]:
+        "Delete all images"
+        return []
