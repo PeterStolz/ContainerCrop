@@ -29,7 +29,7 @@ def generate_images():
 
 def test_RetentionArgs_parsing_happy_path():
     inp = {
-        "image_names": "test",
+        "image_name": "test",
         "cut_off": "1 day ago UTC",
         "token": "test",
         "untagged_only": "false",
@@ -40,13 +40,13 @@ def test_RetentionArgs_parsing_happy_path():
         "repo_owner": "test",
     }
     args = RetentionArgs(**inp)
-    assert args.image_names == "test"
+    assert args.image_name == "test"
     assert args.keep_at_least == 0
 
 
 def test_RetentionArgs_cant_set_both_skip_tags_and_untagged_only():
     inp = {
-        "image_names": "test",
+        "image_name": "test",
         "cut_off": "1 day ago UTC",
         "untagged_only": "true",
         "skip_tags": "test",
@@ -60,7 +60,7 @@ def test_RetentionArgs_cant_set_both_skip_tags_and_untagged_only():
 
 def test_apply_retention_policy_keep_at_least():
     policy = RetentionArgs(
-        image_names="test",
+        image_name="test",
         cut_off="1 day ago UTC",
         skip_tags="",
         keep_at_least=10,
@@ -85,7 +85,7 @@ def test_apply_retention_policy_keep_at_least():
 
 def test_delete_untagged_images_older_than_one_day():
     policy = RetentionArgs(
-        image_names="test",
+        image_name="test",
         cut_off="1 day ago UTC",
         skip_tags="",
         keep_at_least=0,
@@ -117,7 +117,7 @@ def test_filter_by_specific_tags_for_deletion(generate_images):
         names_list=["image1"],
     )
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="20 days ago UTC",
         untagged_only=False,
         skip_tags="",
@@ -137,7 +137,7 @@ def test_skip_specific_tags(generate_images):
         names_list=["image1"],
     )
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="1 day ago UTC",
         untagged_only=False,
         skip_tags="beta,latest",
@@ -159,7 +159,7 @@ def test_keep_at_least_n_images(generate_images):
         names_list=["image1"],
     )
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="5 days ago UTC",
         untagged_only=False,
         skip_tags="",
@@ -179,7 +179,7 @@ def test_delete_untagged_images_older_than_x_days(generate_images):
         names_list=["image1", "image2"],
     )
     policy = RetentionArgs(
-        image_names="image1,image2",
+        image_name="image1,image2",
         cut_off="2 days ago UTC",
         untagged_only=True,
         skip_tags="",
@@ -201,7 +201,7 @@ def test_delete_tagged_keep_recent_untagged(generate_images):
         names_list=["image1"],
     )
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="5 days ago UTC",
         untagged_only=False,
         skip_tags="",
@@ -224,7 +224,7 @@ def test_dry_run_does_not_delete_images(generate_images):
     )
     initial_image_count = len(images)
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="5 days ago UTC",
         untagged_only=False,
         skip_tags="",
@@ -246,7 +246,7 @@ def test_keep_all_images_when_keep_at_least_equals_total(generate_images):
         tags_list=[[], ["v1"]], days_old_list=[30, 30], names_list=["image1", "image2"]
     )
     policy = RetentionArgs(
-        image_names="image1,image2",
+        image_name="image1,image2",
         cut_off="1 day ago UTC",
         untagged_only=False,
         skip_tags="",
@@ -266,7 +266,7 @@ def test_wildcard_tag_filtering(generate_images):
         names_list=["image1"],
     )
     policy = RetentionArgs(
-        image_names="image1",
+        image_name="image1",
         cut_off="3 days ago UTC",
         untagged_only=False,
         skip_tags="v1.*",  # Skip any version starting with v1.
