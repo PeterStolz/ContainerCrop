@@ -3,12 +3,14 @@ ContainerCrop - A tool to clean up your github container registry
 and keep only the images you need.
 """
 
+import logging
 import os
 from datetime import datetime
+from fnmatch import fnmatch
 from typing import Annotated
 
 from dateparser import parse
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 from .github_api import Image
 
@@ -34,7 +36,7 @@ class RetentionArgs(BaseModel):
     token: str | None = None
     untagged_only: bool = False
     skip_tags: list[str]
-    keep_at_least: Annotated[int, Field(ge=0)]
+    keep_at_least: Annotated[int, Field(ge=0)] = 0
     filter_tags: list[str] = Field(default_factory=list)
     dry_run: bool = False
     repo_owner: str
@@ -68,15 +70,43 @@ class RetentionArgs(BaseModel):
             raise ValueError("Timezone is required for the cut-off")
         return parsed_cutoff
 
+    @model_validator(mode="after")
+    def check_skip_tags_and_untagged_only(self) -> "RetentionArgs":
+        if self.untagged_only and self.skip_tags:
+            raise ValueError("Cannot set both `untagged_only` and `skip_tags`.")
+        return self
+
+
+def matches_retention_policy(image: Image, args: RetentionArgs) -> bool:
+    """
+    Check if the image matches the retention policy.
+    :param image: The image to check
+    :param args: The retention policy
+    :return: True if the image should be deleted
+    """
+    if args.skip_tags and any(
+        any(fnmatch(tag, skip_tag) for skip_tag in args.skip_tags) for tag in image.tags
+    ):
+        return False
+    if args.untagged_only and image.tags:
+        return False
+    if args.cut_off and image.is_before_cut_off_date(args.cut_off):
+        return True
+    if args.filter_tags and any(
+        any(fnmatch(tag, filter_tag) for filter_tag in args.filter_tags)
+        for tag in image.tags
+    ):
+        logging.debug(f"Image {image.name} does match filter tags")
+        return True
+    return False
+
 
 def apply_retention_policy(args: RetentionArgs, images: list[Image]) -> list[Image]:
     """
     Apply the retention policy to the images and return the ones that should be deleted.
     """
-    # to implement here: cut-off, untagged_only, skip_tags, keep_at_leat, filter_tags
-    # cut-off
-
-    return images[: args.keep_at_least]
+    matches = [image for image in images if matches_retention_policy(image, args)]
+    return matches[args.keep_at_least :]
 
 
 async def main():
