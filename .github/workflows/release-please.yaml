@@ -3,7 +3,7 @@ name: Releases
 on:
     push:
         branches:
-            - master
+            - main
     workflow_call:
     workflow_dispatch:
 
