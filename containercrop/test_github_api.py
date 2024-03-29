@@ -3,7 +3,7 @@ from pprint import pprint
 
 import pytest
 
-from . import github_api
+from containercrop import github_api
 
 
 @pytest.mark.asyncio
