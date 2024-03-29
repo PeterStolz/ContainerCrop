@@ -87,10 +87,13 @@ def matches_retention_policy(image: Image, args: RetentionArgs) -> bool:
     if args.skip_tags and any(
         any(fnmatch(tag, skip_tag) for skip_tag in args.skip_tags) for tag in image.tags
     ):
+        logging.debug(f"Image {image.name} does match skip tags")
         return False
     if args.untagged_only and image.tags:
+        logging.debug(f"Image {image.name} is tagged and untagged_only is set")
         return False
     if args.cut_off and image.is_before_cut_off_date(args.cut_off):
+        logging.debug(f"Image {image.name} is before cut-off date")
         return True
     if args.filter_tags and any(
         any(fnmatch(tag, filter_tag) for filter_tag in args.filter_tags)
@@ -98,6 +101,7 @@ def matches_retention_policy(image: Image, args: RetentionArgs) -> bool:
     ):
         logging.debug(f"Image {image.name} does match filter tags")
         return True
+    logging.debug(f"Image {image.name} does not match any policy, therefore we keep it")
     return False
 
 
