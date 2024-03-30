@@ -1,4 +1,12 @@
 # ContainerCrop Action
+<p align="center">
+<a href="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml/badge.svg"><img src="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml"/>
+</a>
+<a href="https://codecov.io/gh/PeterStolz/ContainerCrop" >
+ <img src="https://codecov.io/gh/PeterStolz/ContainerCrop/graph/badge.svg?token=32RZF4Y1Q2"/>
+ </a>
+ </p>
+
 The `ContainerCrop` GitHub Action allows you to delete unwanted GitHub Container Registry (GHCR) images directly from your CI workflows. It offers a flexible way to manage your container images by specifying criteria such as cut-off date, and tag filtering.
 
 ## Inputs
