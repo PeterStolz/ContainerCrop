@@ -44,3 +44,46 @@ def test_is_cut_off_date():
         datetime.now() - timedelta(days=1),
         use_updated=False,
     )
+
+
+def test_get_next_page_returns_link():
+    link = '<https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="next", <https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="last"'
+    assert (
+        github_api.get_next_page(link)
+        == "https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30"
+    )
+
+
+def test_various_link_header_formats():
+    tests = [
+        (
+            {
+                "link": '<https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="next"',
+                "expected": "https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30",
+            }
+        ),
+        (
+            {
+                "link": '<https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="last", <https://api.github.com/organizations/1111/packages/container/backend/versions?page=1&per_page=30>; rel="next"',
+                "expected": "https://api.github.com/organizations/1111/packages/container/backend/versions?page=1&per_page=30",
+            }
+        ),
+        (
+            {
+                "link": '<https://api.github.com/organizations/1111/packages/container/backend/versions?page=3&per_page=30>; rel="previous", <https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="first", <https://api.github.com/organizations/1111/packages/container/backend/versions?page=4&per_page=30>; rel="next"',
+                "expected": "https://api.github.com/organizations/1111/packages/container/backend/versions?page=4&per_page=30",
+            }
+        ),
+        ({"link": "", "expected": None}),
+        (
+            {
+                "link": '<https://api.github.com/organizations/1111/packages/container/backend/versions?page=2&per_page=30>; rel="first"',
+                "expected": None,
+            }
+        ),
+    ]
+
+    for test in tests:
+        assert (
+            github_api.get_next_page(test["link"]) == test["expected"]
+        ), f"Failed for link: {test['link']}"

@@ -123,5 +123,16 @@ async def main(retention_args: RetentionArgs):
     api = GithubAPI(owner=retention_args.repo_owner, token=retention_args.token)
     images = await api.get_versions(retention_args.image_name)
     to_delete = apply_retention_policy(retention_args, images)
-    logging.info("Images to delete: %s", to_delete)
-    await api.delete_images(to_delete)
+    if not retention_args.dry_run:
+        logging.info("Will delete %s images", len(to_delete))
+        logging.info(
+            "Images to delete: \n\t%s", "\n\t".join(str(img) for img in to_delete)
+        )
+        await api.delete_images(to_delete)
+    else:
+        logging.info("Would delete %s images but dry_run is enabled", len(to_delete))
+        logging.info(
+            "Images that would be deleted: \n\t%s",
+            "\n\t".join(str(img) for img in to_delete),
+        )
+    logging.info("Done")
