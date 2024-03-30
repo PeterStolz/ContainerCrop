@@ -1,6 +1,6 @@
 # ContainerCrop Action
 <p align="center">
-<a href="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml/badge.svg"><img src="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml"/>
+<a href="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml"><img src="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml/badge.svg"/>
 </a>
 <a href="https://codecov.io/gh/PeterStolz/ContainerCrop" >
  <img src="https://codecov.io/gh/PeterStolz/ContainerCrop/graph/badge.svg?token=32RZF4Y1Q2"/>
