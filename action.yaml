@@ -1,0 +1,56 @@
+name: 'ContainerCrop'
+description: 'Delete unwanted GHCR images in your CI'
+inputs:
+  image-name:
+    description: 'Image name to delete.'
+    required: true
+  cut-off:
+    description: "The cut-off for which to delete images older than. For example '2 days ago UTC'. Timezone is required."
+    required: true
+  token:
+    description: 'Personal access token with read and delete scopes.'
+    required: true
+  untagged-only:
+    description: 'Restrict deletions to images without tags.'
+    required: false
+    default: 'false'
+  skip-tags:
+    description: "Restrict deletions to images without specific tags. Supports Unix-shell style wildcards"
+    required: false
+  keep-at-least:
+    description: 'How many matching images to keep no matter what. Defaults to 0 which means you would delete all matching images.'
+    required: false
+    default: '0'
+  filter-tags:
+    description: "Comma-separated list of tags to consider for deletion. Supports Unix-shell style wildcards"
+    required: false
+  dry-run:
+    description: "Do not actually delete images. Print output showing what would have been deleted."
+    required: false
+    default: 'false'
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+        cache: 'pip'
+
+    - shell: bash
+      run: pip install -r ${{ github.action_path }}/requirements.txt
+
+    - shell: bash
+      run: |
+        cd ${{ github.action_path }}
+        python -m containercrop
+      env:
+        IMAGE_NAME: ${{ inputs.image-name }}
+        CUT_OFF: ${{ inputs.cut-off }}
+        TOKEN: ${{ inputs.token }}
+        UNTAGGED_ONLY: ${{ inputs.untagged-only }}
+        SKIP_TAGS: ${{ inputs.skip-tags }}
+        KEEP_AT_LEAST: ${{ inputs.keep-at-least }}
+        FILTER_TAGS: ${{ inputs.filter-tags }}
+        DRY_RUN: ${{ inputs.dry-run }}
+        REPO_OWNER: ${{ github.repository_owner }}
