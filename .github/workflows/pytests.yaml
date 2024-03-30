@@ -3,7 +3,7 @@ name: pytests
 on: [push, pull_request]
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     name: Pytest
     if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
@@ -28,3 +28,9 @@ jobs:
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
         slug: PeterStolz/ContainerCrop
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-python@v5
+    - uses: pre-commit/action@v3.0.1

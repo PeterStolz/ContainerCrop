@@ -43,7 +43,7 @@ class RetentionArgs(BaseModel):
 
     @classmethod
     def from_env(cls) -> "RetentionArgs":
-        return cls(**get_args_from_env())
+        return cls(**get_args_from_env())  # type: ignore
 
     def __str__(self) -> str:
         return f"Args: {self.__dict__}"

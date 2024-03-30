@@ -1,5 +1,7 @@
-from containercrop.retention import main, RetentionArgs
 import logging
+
+from containercrop.retention import RetentionArgs, main
+
 if __name__ == "__main__":
     import asyncio
 
