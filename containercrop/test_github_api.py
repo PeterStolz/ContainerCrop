@@ -7,6 +7,7 @@ from containercrop import github_api
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip
 async def test_github_api_gets_user_right():
     # Only works if you have a valid GH_TOKEN set
     api = github_api.GithubAPI(owner="peterstolz")
@@ -18,6 +19,7 @@ async def test_github_api_gets_user_right():
 
 
 @pytest.mark.asyncio
+@pytest.mark.skip
 async def test_github_api_gets_packages():
     # Only works if you have a valid GH_TOKEN set
     api = github_api.GithubAPI(owner="prezero")
