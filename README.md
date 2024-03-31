@@ -52,8 +52,4 @@ jobs:
 - The `cut-off` input is crucial for determining which images are considered "old" and eligible for deletion.
 - Use the `dry-run` option to safely check what would be deleted before performing actual deletions.
 
-For more detailed information, refer to the test cases in `containercrop/test_retention.py`
-
----
-
-Remember to replace `your-github-username` with your actual GitHub username and adjust the `image-name` and other inputs as necessary for your specific use case.
+For more detailed information, refer to the test cases in `./containercrop/test_retention.py`
