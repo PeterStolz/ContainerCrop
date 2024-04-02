@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.2](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.1...v1.0.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* ignore image if it does not match filter-tags ([ff7e56a](https://github.com/PeterStolz/ContainerCrop/commit/ff7e56aa5f1cd6b41df61af8c3c87e541e959455))
+
 ## [1.0.1](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.0...v1.0.1) (2024-04-02)
 
 
