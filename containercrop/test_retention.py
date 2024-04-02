@@ -113,6 +113,26 @@ def test_delete_untagged_images_older_than_one_day():
 def test_filter_by_specific_tags_for_deletion(generate_images):
     images = generate_images(
         tags_list=[["v1"], ["v1.0"], ["beta"], ["latest"]],
+        days_old_list=[30],
+        names_list=["image1"],
+    )
+    policy = RetentionArgs(
+        image_name="image1",
+        cut_off="20 days ago UTC",
+        untagged_only=False,
+        skip_tags="",
+        keep_at_least=0,
+        filter_tags="v1,v1.0",
+        dry_run=True,
+        token="dummy_token",
+        repo_owner="test",
+    )
+    assert len(apply_retention_policy(policy, images)) == 2
+
+
+def test_filter_by_specific_tags_for_deletion_but_not_expired(generate_images):
+    images = generate_images(
+        tags_list=[["v1"], ["v1.0"], ["beta"], ["latest"]],
         days_old_list=[5, 5, 5, 5],
         names_list=["image1"],
     )
@@ -124,6 +144,69 @@ def test_filter_by_specific_tags_for_deletion(generate_images):
         keep_at_least=0,
         filter_tags="v1,v1.0",
         dry_run=True,
+        token="dummy_token",
+        repo_owner="test",
+    )
+    assert len(apply_retention_policy(policy, images)) == 0
+
+
+def test_filter_by_specific_tags_for_deletion_when_all_are_expired(generate_images):
+    images = generate_images(
+        tags_list=[["v1"], ["v1.0"], ["beta"], ["latest"]],
+        days_old_list=[30],
+        names_list=["image1"],
+    )
+    policy = RetentionArgs(
+        image_name="image1",
+        cut_off="20 days ago UTC",
+        untagged_only=False,
+        skip_tags="",
+        keep_at_least=0,
+        filter_tags="v1,v1.0",
+        dry_run=True,
+        token="dummy_token",
+        repo_owner="test",
+    )
+    assert len(apply_retention_policy(policy, images)) == 2
+
+
+def test_filter_by_specific_tags_for_deletion_when_there_are_multiple_tags(
+    generate_images,
+):
+    images = generate_images(
+        tags_list=[["asdf", "v1"], ["test", "test1", "v1.0"], ["beta"], ["latest"]],
+        days_old_list=[30],
+        names_list=["image1"],
+    )
+    policy = RetentionArgs(
+        image_name="image1",
+        cut_off="20 days ago UTC",
+        untagged_only=False,
+        skip_tags="",
+        keep_at_least=0,
+        filter_tags="v1,v1.0",
+        dry_run=True,
+        token="dummy_token",
+        repo_owner="test",
+    )
+    assert len(apply_retention_policy(policy, images)) == 2
+
+
+def test_filter_by_wildcard_tags_for_deletion(
+    generate_images,
+):
+    images = generate_images(
+        tags_list=[["asdf", "v1"], ["test", "test1", "v1.0"], ["beta"], ["latest"]],
+        days_old_list=[30],
+        names_list=["image1"],
+    )
+    policy = RetentionArgs(
+        image_name="image1",
+        cut_off="20 days ago UTC",
+        untagged_only=False,
+        skip_tags="",
+        keep_at_least=0,
+        filter_tags="v1*",
         token="dummy_token",
         repo_owner="test",
     )
@@ -143,7 +226,6 @@ def test_skip_specific_tags(generate_images):
         skip_tags="beta,latest",
         keep_at_least=0,
         filter_tags="",
-        dry_run=True,
         token="dummy_token",
         repo_owner="test",
     )
@@ -183,7 +265,6 @@ def test_delete_untagged_images_older_than_x_days(generate_images):
         cut_off="2 days ago UTC",
         untagged_only=True,
         skip_tags="",
-        keep_at_least=0,
         filter_tags="",
         repo_owner="test",
     )
@@ -205,7 +286,6 @@ def test_delete_tagged_keep_recent_untagged(generate_images):
         cut_off="5 days ago UTC",
         untagged_only=False,
         skip_tags="",
-        keep_at_least=0,
         filter_tags="",
         repo_owner="test",
     )
@@ -270,7 +350,6 @@ def test_wildcard_tag_filtering(generate_images):
         cut_off="3 days ago UTC",
         untagged_only=False,
         skip_tags="v1.*",  # Skip any version starting with v1.
-        keep_at_least=0,
         filter_tags="*",  # Consider all tags
         repo_owner="test",
     )
@@ -281,3 +360,24 @@ def test_wildcard_tag_filtering(generate_images):
     assert not any(
         "v1" in tag for img in retained_images for tag in img.tags
     )  # No v1.* tags
+
+
+def test_image_processing_enforces_date_order(generate_images):
+    images = generate_images(
+        tags_list=[["v1.1"], ["v1.2"], ["beta"], ["latest"]],
+        days_old_list=[35, 34, 33, 32],
+        names_list=["image1"],
+    )
+    policy = RetentionArgs(
+        image_name="image1",
+        cut_off="30 days ago UTC",
+        repo_owner="test",
+        keep_at_least=2,
+        skip_tags=[],
+    )
+    retained_images = apply_retention_policy(policy, images)
+    assert (
+        len(retained_images) == 2
+    )  # "beta" and possibly "latest" if not matching skip_tags wildcard
+    assert retained_images[0].tags == ["v1.2"]
+    assert retained_images[1].tags == ["v1.1"]
