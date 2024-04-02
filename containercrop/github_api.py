@@ -4,6 +4,7 @@ import logging
 import os
 from datetime import datetime
 from typing import Annotated
+from urllib.parse import quote
 
 import aiohttp
 from pydantic import BaseModel, Field
@@ -52,6 +53,10 @@ def get_next_page(link_header: str | None) -> str | None:
             return next_link
 
     return None
+
+
+def encode_image(image_name: str) -> str:
+    return quote(image_name, safe="")
 
 
 class GithubAPI:
@@ -137,7 +142,7 @@ class GithubAPI:
         "Get all versions of an image for a repo"
         assert self.is_user
         return await self._get_all_versions(
-            f"{self.api_url}/user/packages/container/{image_name}/versions?per_page=100"
+            f"{self.api_url}/user/packages/container/{encode_image(image_name)}/versions?per_page=100"
         )
 
     @ensure_user_checked
@@ -145,7 +150,7 @@ class GithubAPI:
         "Get all versions of an image for an org"
         assert not self.is_user
         return await self._get_all_versions(
-            f"{self.api_url}/orgs/{self.owner}/packages/container/{image_name}/versions?per_page=100"
+            f"{self.api_url}/orgs/{self.owner}/packages/container/{encode_image(image_name)}/versions?per_page=100"
         )
 
     @ensure_user_checked

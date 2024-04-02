@@ -131,6 +131,9 @@ async def main(retention_args: RetentionArgs):
             "Images to delete: \n\t%s", "\n\t".join(str(img) for img in to_delete)
         )
         await api.delete_images(to_delete)
+        logging.info(
+            "If you deleted images you want to keep don't panic you have 30 days to recoer them. You can check out https://docs.github.com/en/packages/learn-github-packages/deleting-and-restoring-a-package#restoring-packages"
+        )
     else:
         logging.info("Would delete %s images but dry_run is enabled", len(to_delete))
         logging.info(

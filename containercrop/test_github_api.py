@@ -89,3 +89,8 @@ def test_various_link_header_formats():
         assert (
             github_api.get_next_page(test["link"]) == test["expected"]
         ), f"Failed for link: {test['link']}"
+
+
+def test_encode_image():
+    name = "asdf/asdf"
+    assert github_api.encode_image(name) == "asdf%2Fasdf"
