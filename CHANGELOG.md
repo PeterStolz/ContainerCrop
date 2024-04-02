@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.0...v1.0.1) (2024-04-02)
+
+
+### Bug Fixes
+
+* encode image names in case of / ([6678e8a](https://github.com/PeterStolz/ContainerCrop/commit/6678e8a963c89deee552fe179dd4a95de8e58f0e))
+
 ## 1.0.0 (2024-03-31)
 
 
