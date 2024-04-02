@@ -80,7 +80,7 @@ jobs:
         token: ${{ secrets.YOUR_TOKEN }}
         untagged-only: 'true'
         dry-run: 'true'
-    
+
 ```
 
 ## Notes
