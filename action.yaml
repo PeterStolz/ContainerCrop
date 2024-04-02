@@ -1,5 +1,9 @@
 name: 'ContainerCrop'
 description: 'Delete unwanted GHCR images in your CI'
+branding:
+  icon: 'archive'
+  color: 'purple'
+
 inputs:
   image-name:
     description: 'Image name to delete.'
