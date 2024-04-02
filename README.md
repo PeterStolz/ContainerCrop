@@ -42,15 +42,45 @@ jobs:
   cleanup:
     runs-on: ubuntu-latest
     steps:
-    - name: Delete Unwanted GHCR Images
-      uses: peterstolz/containercrop@v1
+    - name: Delete untagged images older than 30 days
+      uses: peterstolz/containercrop@v1.0.2
       with:
         image-name: 'your-image-name'
         cut-off: '30 days ago UTC'
         token: ${{ secrets.GITHUB_TOKEN }}
         untagged-only: 'true'
         keep-at-least: '5'
-        dry-run: 'false'
+        dry-run: 'true'
+```
+
+If you have multiple images you can use the matrix strategy to apply the same policies to them:
+```yaml
+jobs:
+  delete-images:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          image: [container1, container2, container3, container4]
+    steps:
+    - name: Delete old tagged images older than one week keeping 7
+      uses: peterstolz/containercrop@v1.0.2
+      with:
+        image-name: my-repo-name/${{ matrix.image }}
+        cut-off: 'a week ago UTC'
+        token: ${{ secrets.YOUR_TOKEN }}
+        filter-tags: "*.*.*"
+        keep-at-least: '7'
+        dry-run: 'true'
+
+    - name: Delete all untagged images older than 2 days
+      uses: peterstolz/containercrop@v1.0.2
+      with:
+        image-name: my-repo-name/${{ matrix.image }}
+        cut-off: 'two days ago UTC'
+        token: ${{ secrets.YOUR_TOKEN }}
+        untagged-only: 'true'
+        dry-run: 'true'
+    
 ```
 
 ## Notes
