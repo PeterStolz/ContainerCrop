@@ -1,11 +1,18 @@
 # ContainerCrop Action
 <p align="center">
-<a href="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml"><img src="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml/badge.svg"/>
-</a>
-<a href="https://codecov.io/gh/PeterStolz/ContainerCrop" >
- <img src="https://codecov.io/gh/PeterStolz/ContainerCrop/graph/badge.svg?token=32RZF4Y1Q2"/>
+ <a href="https://www.python.org/downloads/release/python-3120/">
+  <img src="https://img.shields.io/badge/python-3.12-blue.svg">
  </a>
- </p>
+ <a href="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml">
+  <img src="https://github.com/PeterStolz/ContainerCrop/actions/workflows/pytests.yaml/badge.svg"/>
+ </a>
+ <a href="https://codecov.io/gh/PeterStolz/ContainerCrop" >
+  <img src="https://codecov.io/gh/PeterStolz/ContainerCrop/graph/badge.svg?token=32RZF4Y1Q2"/>
+ </a>
+ <a href="https://github.com/psf/black">
+  <img src="https://img.shields.io/badge/code%20style-black-000000.svg">
+ </a>
+</p>
 
 The `ContainerCrop` GitHub Action allows you to delete unwanted GitHub Container Registry (GHCR) images directly from your CI workflows. It offers a flexible way to manage your container images by specifying criteria such as cut-off date, and tag filtering.
 
