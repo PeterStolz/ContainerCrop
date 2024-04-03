@@ -27,5 +27,5 @@ jobs:
               if: steps.release.outputs.release_created == 'true'
               run: |
                 MAJOR_VERSION=$(echo ${{ steps.release.outputs.tag_name }} | grep -oP '^v\d+')
-                git tag -fa $MAJOR_VERSION -m "$MAJOR_VERSION release ${GITHUB_REF_NAME}"
-                git push origin $MAJOR_VERSION --force
+                git tag -fa "$MAJOR_VERSION" -m "$MAJOR_VERSION release ${GITHUB_REF_NAME}"
+                git push origin "$MAJOR_VERSION" --force
