@@ -14,7 +14,18 @@ jobs:
             release_created: ${{ steps.release.outputs.release_created }}
             tag_name: ${{ steps.release.outputs.tag_name }}
         steps:
-            -   uses: google-github-actions/release-please-action@v4
-                id: release
-                with:
-                    release-type: simple
+            - uses: actions/checkout@v4
+              with:
+                fetch-depth: 0 # Necessary to fetch all history for tag manipulation
+
+            - uses: google-github-actions/release-please-action@v4
+              id: release
+              with:
+                release-type: simple
+
+            - name: Update Major Version Tag
+              if: steps.release.outputs.release_created == 'true'
+              run: |
+                MAJOR_VERSION=$(echo ${{ steps.release.outputs.tag_name }} | grep -oP '^v\d+')
+                git tag -fa $MAJOR_VERSION -m "$MAJOR_VERSION release ${GITHUB_REF_NAME}"
+                git push origin $MAJOR_VERSION --force
