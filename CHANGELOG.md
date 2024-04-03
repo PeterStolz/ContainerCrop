@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.4](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.3...v1.0.4) (2024-04-03)
+
+
+### Bug Fixes
+
+* init git config ([fc0f0de](https://github.com/PeterStolz/ContainerCrop/commit/fc0f0de8b14f502acea2ecb0bec65d16d27b6bdf))
+
 ## [1.0.3](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.2...v1.0.3) (2024-04-03)
 
 
