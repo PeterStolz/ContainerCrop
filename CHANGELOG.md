@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.3](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.2...v1.0.3) (2024-04-03)
+
+
+### Bug Fixes
+
+* add major version tagging ([745d762](https://github.com/PeterStolz/ContainerCrop/commit/745d762787fa4255ba04b9071054c2702f585286))
+
 ## [1.0.2](https://github.com/PeterStolz/ContainerCrop/compare/v1.0.1...v1.0.2) (2024-04-02)
 
 
